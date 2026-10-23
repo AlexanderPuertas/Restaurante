@@ -2,9 +2,9 @@
   "name": "apirestaurante",
   "version": "1.0.0",
   "description": "",
-  "main": "restaurente.js",
+  "main": "restaurante.js",
   "scripts": {
-    "dev": "node --watch restaurente.js"
+    "dev": "node --watch restaurante.js"
   },
   "keywords": [],
   "author": "",
