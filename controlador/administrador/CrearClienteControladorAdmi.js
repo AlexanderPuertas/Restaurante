@@ -1,4 +1,4 @@
-const modelo = require('../../modelo/cliente/administrador/CrearClienteModelo');
+const modelo = require('../../modelo/administrador/CrearClienteModeloAdmi');
 
 class CrearClienteControladorAdmi {
     // funcion crear nuevo cliente

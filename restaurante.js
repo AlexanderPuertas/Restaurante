@@ -2,7 +2,8 @@ const express = require('express');
 const cors = require('cors');
 
 // Importa la ruta real que tienes creada en tu explorador:
-const RutasAdmin = require('./vista/cliente/administrador/RutasAdmi');
+const RutasAdmi = require('./vista/administrador/RutasAdmi');
+const RutasCli = require('./vista/cliente/RutasCli');
 
 const app = express();
 const PORT = process.env.PORT || 5020;
@@ -20,7 +21,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Usar la ruta agrupada
-app.use('/', RutasAdmin);
+app.use('/', RutasAdmi);
+app.use('/', RutasCli);
 
 app.get('/', (req, res) => {
     res.send('Bienvenido a la API del restaurante');

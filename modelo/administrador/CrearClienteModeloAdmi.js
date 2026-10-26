@@ -1,7 +1,7 @@
-const dbService = require('../../bd/Conexion');
+const dbService = require('../bd/Conexion');
 const bcrypt = require('bcrypt');
 
-class CrearClienteModelo {
+class CrearClienteModeloAdmi {
     // funcion para crear nuevos clientes por el admin
     static async crearClientes(nom, corr, tel, contra) {
         try {
@@ -20,4 +20,4 @@ class CrearClienteModelo {
     } //cerrar crear cliente
 }
 
-module.exports = CrearClienteModelo;
+module.exports = CrearClienteModeloAdmi;
