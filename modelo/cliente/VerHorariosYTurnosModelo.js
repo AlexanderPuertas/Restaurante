@@ -7,6 +7,7 @@ class VerHorariosYTurnosModelo {
             SELECT 
                 idturnos,
                 nombre_turno,
+                dia_semana,
                 hora_inicio,
                 hora_fin,
                 estado,
@@ -28,6 +29,7 @@ class VerHorariosYTurnosModelo {
             SELECT 
                 idturnos,
                 nombre_turno,
+                dia_semana,
                 hora_inicio,
                 hora_fin,
                 estado,
