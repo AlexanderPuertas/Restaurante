@@ -7,8 +7,8 @@ const turnosClienteCtrl = require('../../controlador/cliente/VerHorariosYTurnosC
 
 const router = express.Router();
 
-router.post('/registro-cliente', crearClienteCtrl.crearCliente);
-router.post('/login-cliente', loginClienteCtrl.login);
-router.get('/horarios-turnos', turnosClienteCtrl.verHorarios);
+router.post('/registro-cliente', crearClienteCtrl.crearCliente); // RF02
+router.post('/login-cliente', loginClienteCtrl.login); // RF03
+router.get('/horarios-turnos', turnosClienteCtrl.verHorarios); // RF04
 
 module.exports = router;
