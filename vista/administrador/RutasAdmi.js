@@ -5,6 +5,7 @@ const verturnosClienteCtrl = require('../../controlador/administrador/VerHorario
 const editarhorariosCtrl = require('../../controlador/administrador/EditarHorariosControlador');
 const crearhorariosCtrl = require('../../controlador/administrador/CrearHorariosControlador');
 const eliminarhorariosCtrl = require('../../controlador/administrador/EliminarHorarioControlador');
+const eliminarclienteCtrl = require('../../controlador/administrador/EliminarClienteControlador');
 
 
 
@@ -15,4 +16,5 @@ router.get('/horarios-turnos', verturnosClienteCtrl.verHorarios); //RF05
 router.put('/editar-horario/:idturnos', editarhorariosCtrl.editar); //RF06
 router.post('/crear-horario', crearhorariosCtrl.crear); //RF06
 router.delete('/eliminar-horario/:idturnos', eliminarhorariosCtrl.eliminar); //RF07
+router.delete('/eliminar-cliente/:correo', eliminarclienteCtrl.eliminar); //RF08
 module.exports = router;
