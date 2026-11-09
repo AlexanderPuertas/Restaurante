@@ -1,4 +1,4 @@
-const dbService = require('../bd/Conexion'); // Asegúrate de que la ruta a tu archivo de conexión sea correcta
+const dbService = require('../bd/Conexion'); 
 
 class VerHorariosYTurnosModelo {
     // Listar todos los turnos activos y disponibles del restaurante

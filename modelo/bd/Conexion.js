@@ -1,5 +1,5 @@
 const mysql = require('mysql2');
-const dbConfig = require('./Config');
+const dbConfig = require('./config');
 
 class Conexion {
   constructor() {

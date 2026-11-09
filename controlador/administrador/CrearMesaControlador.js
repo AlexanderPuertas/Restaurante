@@ -89,9 +89,9 @@ class CrearMesaControlador {
 
     // Validar estado de la mesa
     static verEstado(est) {
-        const estadosPermitidos = ['disponible', 'ocupada', 'mantenimiento'];
+        const estadosPermitidos = ['disponible', 'ocupada'];
         if (!estadosPermitidos.includes(est.toLowerCase())) {
-            return "El estado debe ser 'disponible', 'ocupada' o 'mantenimiento'.";
+            return "El estado debe ser 'disponible', 'ocupada'.";
         }
         return null;
     }

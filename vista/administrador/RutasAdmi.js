@@ -9,8 +9,12 @@ const eliminarclienteCtrl = require('../../controlador/administrador/EliminarCli
 const crearmesaCtrl = require('../../controlador/administrador/CrearMesaControlador');
 const editarmesasCtrl = require('../../controlador/administrador/EditarMesaControlador');
 const eliminarmesaCtrl = require('../../controlador/administrador/EliminarMesaControlador');
+const vermesasCtrl = require('../../controlador/administrador/VerMesasAdmiControlador');
+
 
 const router = express.Router();
+
+
 
 router.post('/seguridad-crearCliente', crearClienteCtrl.crearCliente); // RF01
 router.get('/horarios-turnos', verturnosClienteCtrl.verHorarios); //RF05
@@ -21,4 +25,7 @@ router.delete('/eliminar-cliente/:correo', eliminarclienteCtrl.eliminar); //RF08
 router.post('/crear-mesa', crearmesaCtrl.crearMesa); //RF09
 router.put('/editar-mesa/:idmesa', editarmesasCtrl.editar); //RF09
 router.delete('/eliminar-mesa/:idmesa', eliminarmesaCtrl.eliminar); //RF09
+router.get('/ver-mesasadmi/', vermesasCtrl.verMesas); //RF10
+
+
 module.exports = router;

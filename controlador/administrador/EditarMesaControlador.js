@@ -109,7 +109,7 @@ class EditarMesaControlador {
     static verEstado(est) {
         const estadosPermitidos = ['disponible', 'ocupada', 'mantenimiento'];
         if (!estadosPermitidos.includes(String(est).toLowerCase())) {
-            return "El estado debe ser 'disponible', 'ocupada' o 'mantenimiento'.";
+            return "El estado debe ser 'disponible', 'ocupada'.";
         }
         return null;
     }
