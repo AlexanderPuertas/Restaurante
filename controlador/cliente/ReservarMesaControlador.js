@@ -6,7 +6,7 @@ class ReservarMesaControlador {
     this.modelo = new ReservarMesaModelo();
   }
 
-  // Convertido a función flecha para preservar el contexto de 'this'
+  // Validar disponibilidad de la mesa
   validarDisponibilidadMesa = async (req, res) => {
     try {
       const { idMesa, fecha, hora } = req.query;
@@ -25,13 +25,21 @@ class ReservarMesaControlador {
     }
   }
 
-  // Convertido a función flecha para que funcione perfectamente con tu router.js
+  // Registrar la reserva
   reservarMesa = async (req, res) => {
     try {
-      const idCliente = req.user ? req.user.idCliente : req.body.idCliente; 
+      // Ajustado para capturar Idclientes con la estructura real de tu BD
+      const Idclientes = req.user ? (req.user.Idclientes || req.user.idCliente) : req.body.Idclientes; 
       const { idMesa, fecha, hora, numPersonas, notas } = req.body;
 
-      // Validar que no sean fechas u horas pasadas (Regla de negocio 3)
+      if (!Idclientes) {
+        return res.status(400).json({
+          success: false,
+          error: 'No se encontró el identificador del cliente en la sesión o petición.'
+        });
+      }
+
+      // Validar que no sean fechas u horas pasadas
       const fechaReserva = new Date(`${fecha}T${hora}`);
       if (fechaReserva < new Date()) {
         return res.status(400).json({
@@ -43,7 +51,7 @@ class ReservarMesaControlador {
       // Ejecutar la creación de la reserva a través del modelo
       const nuevaReserva = await this.modelo.crearReserva(
         idMesa, 
-        idCliente, 
+        Idclientes, 
         fecha, 
         hora, 
         numPersonas, 

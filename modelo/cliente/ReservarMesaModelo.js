@@ -1,4 +1,4 @@
-// modelo/cliente/ReservarMesaModelo.js
+
 const db = require('../bd/Conexion');
 
 class ReservarMesaModelo {
@@ -18,9 +18,9 @@ class ReservarMesaModelo {
         throw new Error('La capacidad de la mesa es insuficiente para el número de personas (CA-02).');
       }
 
-      // Validar si la mesa está libre
-      if (mesa.estado !== 'disponible') {
-        throw new Error('La mesa seleccionada ya se encuentra ocupada o reservada (CA-03).');
+      // Validar si la mesa está libre (puedes ajustar 'ocupada' o 'disponible' según lo manejes)
+      if (mesa.estado === 'ocupada') {
+        throw new Error('La mesa seleccionada ya se encuentra ocupada (CA-03).');
       }
 
       return mesa;
@@ -32,13 +32,11 @@ class ReservarMesaModelo {
   // 2. Validar que la hora esté dentro de los turnos de atención disponibles
   async validarTurnoYHorario(hora) {
     try {
-      // Consultamos los turnos activos en turnos_atencion
       const turnos = await db.query('SELECT * FROM turnos_atencion WHERE estado = 1');
       if (turnos.length === 0) {
         throw new Error('No hay turnos de atención activos en este momento.');
       }
 
-      // Verificamos si la hora de la reserva se encuentra dentro de algún rango de turno (hora_inicio - hora_fin)
       const turnoValido = turnos.some(turno => {
         return hora >= turno.hora_inicio && hora <= turno.hora_fin;
       });
@@ -53,8 +51,8 @@ class ReservarMesaModelo {
     }
   }
 
-  // 3. Crear la reserva (Actualiza el estado de la mesa a ocupada/reservada)
-  async crearReserva(idMesa, idCliente, fecha, hora, numPersonas, notas = '') {
+  // 3. Crear la reserva (Inserta en la BD y actualiza la mesa)
+  async crearReserva(idMesa, Idclientes, fecha, hora, numPersonas, notas = '') {
     try {
       // Validar mesa y capacidad
       await this.validarMesa(idMesa, numPersonas);
@@ -62,7 +60,17 @@ class ReservarMesaModelo {
       // Validar turno de atención
       await this.validarTurnoYHorario(hora);
 
-      // Bloquear / actualizar el estado de la mesa en la tabla 'mesas' (Regla de negocio 4 / CA-01)
+      // A. INSERTAR LA RESERVA EN LA NUEVA TABLA `reservas`
+      const insertQuery = `
+        INSERT INTO reservas (Idclientes, idmesa, fecha_reserva, hora_reserva, numero_personas, estado, observaciones) 
+        VALUES (?, ?, ?, ?, ?, 'pendiente', ?)
+      `;
+      const resultadoInsert = await db.query(insertQuery, [Idclientes, idMesa, fecha, hora, numPersonas, notas]);
+      
+      // Capturamos el ID de la reserva recién creada
+      const idReservaGenerada = resultadoInsert.insertId;
+
+      // B. Actualizar el estado de la mesa a 'ocupada' en la tabla 'mesas'
       const updateQuery = `
         UPDATE mesas 
         SET estado = 'ocupada' 
@@ -72,14 +80,16 @@ class ReservarMesaModelo {
 
       return {
         success: true,
-        mensaje: 'Reserva registrada exitosamente y mesa bloqueada (CA-01).',
+        mensaje: 'Reserva registrada exitosamente y guardada en la base de datos (CA-01).',
         detalles: {
+          idreserva: idReservaGenerada,
           idMesa,
-          idCliente,
+          Idclientes,
           fecha,
           hora,
           numeroPersonas: numPersonas,
           notas,
+          estadoReserva: 'pendiente',
           estadoMesa: 'ocupada'
         }
       };

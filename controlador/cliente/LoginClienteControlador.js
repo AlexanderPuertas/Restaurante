@@ -34,6 +34,7 @@ class LoginClienteControlador {
             res.status(200).json({
                 mensaje: 'Inicio de sesión exitoso.',
                 usuario: {
+                    idCliente: cliente.idCliente,
                     nombres: cliente.nombres,
                     correo: cliente.correo
                 }
