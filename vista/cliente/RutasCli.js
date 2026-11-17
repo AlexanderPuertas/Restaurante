@@ -6,6 +6,7 @@ const turnosClienteCtrl = require('../../controlador/cliente/VerHorariosYTurnosC
 const vermesasCtrl = require('../../controlador/cliente/VerMesasCliControlador');
 const reservarmesaCtrl = require('../../controlador/cliente/ReservarMesaControlador');
 const reservasCtrl = require('../../controlador/cliente/ReservasControlador');
+const editarReservasCtrl = require('../../controlador/cliente/EditarReservasControlador');
 
 
 const router = express.Router();
@@ -16,4 +17,5 @@ router.get('/horarios-turnos', turnosClienteCtrl.verHorarios); // RF04
 router.get('/ver-mesascliente', vermesasCtrl.verMesas); // RF10
 router.post('/reservar-mesa', reservarmesaCtrl.reservarMesa); // RF11
 router.get('/mis-reservas', reservasCtrl.verReservas); // RF12
+router.put('/editar-reserva/:idReserva', editarReservasCtrl.editarReserva); // RF13
 module.exports = router;
