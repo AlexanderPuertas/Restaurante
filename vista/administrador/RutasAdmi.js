@@ -10,6 +10,7 @@ const crearmesaCtrl = require('../../controlador/administrador/CrearMesaControla
 const editarmesasCtrl = require('../../controlador/administrador/EditarMesaControlador');
 const eliminarmesaCtrl = require('../../controlador/administrador/EliminarMesaControlador');
 const vermesasCtrl = require('../../controlador/administrador/VerMesasAdmiControlador');
+const verReservasCtrl = require('../../controlador/administrador/VerReservasControlador');
 
 
 const router = express.Router();
@@ -26,6 +27,7 @@ router.post('/crear-mesa', crearmesaCtrl.crearMesa); //RF09
 router.put('/editar-mesa/:idmesa', editarmesasCtrl.editar); //RF09
 router.delete('/eliminar-mesa/:idmesa', eliminarmesaCtrl.eliminar); //RF09
 router.get('/ver-mesasadmi/', vermesasCtrl.verMesas); //RF10
+router.get('/ver-reservas', verReservasCtrl.verReservas); //RF14
 
 
 module.exports = router;
