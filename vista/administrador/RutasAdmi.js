@@ -11,6 +11,7 @@ const editarmesasCtrl = require('../../controlador/administrador/EditarMesaContr
 const eliminarmesaCtrl = require('../../controlador/administrador/EliminarMesaControlador');
 const vermesasCtrl = require('../../controlador/administrador/VerMesasAdmiControlador');
 const verReservasCtrl = require('../../controlador/administrador/VerReservasControlador');
+const editarReservasCtrl = require('../../controlador/administrador/EditarReservasControlador');
 
 
 const router = express.Router();
@@ -28,6 +29,9 @@ router.put('/editar-mesa/:idmesa', editarmesasCtrl.editar); //RF09
 router.delete('/eliminar-mesa/:idmesa', eliminarmesaCtrl.eliminar); //RF09
 router.get('/ver-mesasadmi/', vermesasCtrl.verMesas); //RF10
 router.get('/ver-reservas', verReservasCtrl.verReservas); //RF14
+router.put('/reservas-admi/:idReserva/estado', editarReservasCtrl.cambiarEstado); //RF15
+router.put('/reservas-admi/:idReserva', editarReservasCtrl.editarReserva); //RF15
+router.delete('/reservas-admi/:idReserva', editarReservasCtrl.eliminarReserva); //RF15
 
 
 module.exports = router;

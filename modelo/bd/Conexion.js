@@ -25,6 +25,35 @@ class Conexion {
         throw err;  // Vuelve a lanzar el error para ser manejado fuera
       });
   }
+
+  async transaction(callback) {
+    const connection = await this.pool.promise().getConnection();
+    let transactionStarted = false;
+
+    try {
+      await connection.beginTransaction();
+      transactionStarted = true;
+
+      const result = await callback(connection);
+
+      await connection.commit();
+      transactionStarted = false;
+      return result;
+    } catch (err) {
+      if (transactionStarted) {
+        try {
+          await connection.rollback();
+        } catch (rollbackError) {
+          throw new Error(
+            `Error en la transacción: ${err.message}. También falló el rollback: ${rollbackError.message}`
+          );
+        }
+      }
+      throw err;
+    } finally {
+      connection.release();
+    }
+  }
 }
 
 module.exports = new Conexion();  // Exporta una instancia única de la clase
