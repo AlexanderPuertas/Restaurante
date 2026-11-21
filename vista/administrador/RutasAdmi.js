@@ -2,6 +2,7 @@ const express = require('express');
 
 const crearClienteCtrl= require('../../controlador/administrador/CrearClienteControladorAdmi');//Rf01
 const crearAdminCtrl = require('../../controlador/administrador/CrearAdminControladorAdmi'); // RF16
+const loginAdminCtrl = require('../../controlador/administrador/LoginAdminControlador'); // RF17
 const verturnosClienteCtrl = require('../../controlador/administrador/VerHorariosYTurnosControlador');
 const editarhorariosCtrl = require('../../controlador/administrador/EditarHorariosControlador');
 const crearhorariosCtrl = require('../../controlador/administrador/CrearHorariosControlador');
@@ -22,6 +23,8 @@ const router = express.Router();
 router.post('/seguridad-crearCliente', crearClienteCtrl.crearCliente); // RF01
 router.post('/crear-administrador', crearAdminCtrl.crearAdmin); // RF16
 router.post('/registro-administrador', crearAdminCtrl.crearAdmin); // RF16 (Alias)
+router.post('/login-administrador', loginAdminCtrl.login); // RF17
+router.post('/login-admin', loginAdminCtrl.login); // RF17 (Alias)
 router.get('/horarios-turnos', verturnosClienteCtrl.verHorarios); //RF05
 router.put('/editar-horario/:idturnos', editarhorariosCtrl.editar); //RF06
 router.post('/crear-horario', crearhorariosCtrl.crear); //RF06
