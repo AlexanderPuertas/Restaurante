@@ -1,11 +1,27 @@
-
 const db = require('../bd/Conexion');
+const LiberadorMesasServicio = require('../../servicios/LiberadorMesasServicio');
 
 class ReservarMesaModelo {
 
-  // 1. Validar que la mesa exista, tenga capacidad suficiente y esté disponible
-  async validarMesa(idMesa, numPersonas) {
+  // Validar si una mesa ya tiene reserva activa en esa fecha y hora
+  async estaDisponible(idMesa, fecha, hora) {
     try {
+      const rows = await db.query(
+        "SELECT COUNT(*) as total FROM reservas WHERE idmesa = ? AND fecha_reserva = ? AND hora_reserva = ? AND estado != 'Cancelada'",
+        [idMesa, fecha, hora]
+      );
+      return rows[0].total === 0;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // 1. Validar que la mesa exista, tenga capacidad suficiente y esté disponible
+  async validarMesa(idMesa, numPersonas, fecha = null, hora = null) {
+    try {
+      // Antes de validar la mesa, limpiamos automáticamente reservas vencidas (> 2 horas)
+      await LiberadorMesasServicio.liberarMesasVencidas();
+
       const mesas = await db.query('SELECT * FROM mesas WHERE idmesa = ?', [idMesa]);
       if (mesas.length === 0) {
         throw new Error('La mesa seleccionada no existe.');
@@ -15,12 +31,15 @@ class ReservarMesaModelo {
 
       // Regla de negocio 2: Capacidad suficiente (CA-02)
       if (mesa.capacidad < numPersonas) {
-        throw new Error('La capacidad de la mesa es insuficiente para el número de personas (CA-02).');
+        throw new Error(`La capacidad de la mesa (${mesa.capacidad} personas) es insuficiente para ${numPersonas} personas (CA-02).`);
       }
 
-      // Validar si la mesa está libre (puedes ajustar 'ocupada' o 'disponible' según lo manejes)
-      if (mesa.estado === 'ocupada') {
-        throw new Error('La mesa seleccionada ya se encuentra ocupada (CA-03).');
+      // Validar si la mesa está libre en la fecha/hora específica
+      if (fecha && hora) {
+        const libre = await this.estaDisponible(idMesa, fecha, hora);
+        if (!libre) {
+          throw new Error('La mesa seleccionada ya se encuentra reservada en esa fecha y hora.');
+        }
       }
 
       return mesa;
@@ -42,7 +61,8 @@ class ReservarMesaModelo {
       });
 
       if (!turnoValido) {
-        throw new Error('La hora seleccionada no se encuentra dentro de ningún turno de atención disponible.');
+        const horarios = turnos.map(t => `${t.nombre_turno} (${t.hora_inicio} a ${t.hora_fin})`).join(' | ');
+        throw new Error(`La hora seleccionada (${hora}) no se encuentra dentro de ningún turno de atención disponible. Turnos válidos: ${horarios}.`);
       }
 
       return true;
@@ -54,13 +74,13 @@ class ReservarMesaModelo {
   // 3. Crear la reserva (Inserta en la BD y actualiza la mesa)
   async crearReserva(idMesa, Idclientes, fecha, hora, numPersonas, notas = '') {
     try {
-      // Validar mesa y capacidad
-      await this.validarMesa(idMesa, numPersonas);
+      // Validar mesa, capacidad y disponibilidad
+      await this.validarMesa(idMesa, numPersonas, fecha, hora);
 
       // Validar turno de atención
       await this.validarTurnoYHorario(hora);
 
-      // A. INSERTAR LA RESERVA EN LA NUEVA TABLA `reservas`
+      // A. INSERTAR LA RESERVA EN LA TABLA `reservas`
       const insertQuery = `
         INSERT INTO reservas (Idclientes, idmesa, fecha_reserva, hora_reserva, numero_personas, estado, observaciones) 
         VALUES (?, ?, ?, ?, ?, 'pendiente', ?)
@@ -79,19 +99,15 @@ class ReservarMesaModelo {
       await db.query(updateQuery, [idMesa]);
 
       return {
-        success: true,
-        mensaje: 'Reserva registrada exitosamente y guardada en la base de datos (CA-01).',
-        detalles: {
-          idreserva: idReservaGenerada,
-          idMesa,
-          Idclientes,
-          fecha,
-          hora,
-          numeroPersonas: numPersonas,
-          notas,
-          estadoReserva: 'pendiente',
-          estadoMesa: 'ocupada'
-        }
+        idreserva: idReservaGenerada,
+        idMesa: Number(idMesa),
+        Idclientes: Number(Idclientes),
+        fecha,
+        hora,
+        numeroPersonas: Number(numPersonas),
+        notas,
+        estadoReserva: 'pendiente',
+        estadoMesa: 'ocupada'
       };
 
     } catch (error) {

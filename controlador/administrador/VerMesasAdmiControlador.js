@@ -1,10 +1,14 @@
 const modelo = require('../../modelo/administrador/VerMesasAdmiModelo');
+const LiberadorMesasServicio = require('../../servicios/LiberadorMesasServicio');
 
 class VerMesasAdmiControlador {
     static async verMesas(req, res) {
         const { idmesa } = req.query;
 
         try {
+            // Actualizar mesas vencidas automáticamente antes de consultar
+            await LiberadorMesasServicio.liberarMesasVencidas();
+
             let mesas;
 
             if (idmesa) {
